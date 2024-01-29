@@ -1,6 +1,6 @@
 import serial
 
-serialPort = serial.Serial(port = "COM3", baudrate=9600,
+serialPort = serial.Serial(port = "COM10", baudrate=9600,
                            bytesize=8, timeout=2, stopbits=serial.STOPBITS_ONE) # setup serial port on pc
 
 serialString = ""                                           # Used to hold data coming over UART
