@@ -67,7 +67,7 @@ def stepsToNextPoint(): ## returns the steps required to cover the distance to t
     return distanceInSteps
 
 
-imageOriginal = cv2.imread('C:/Users/Angelo/LozzaPhotosNShit/OneDrive - Coventry University/Lenna_(test_image).png')         #read test image lenna
+imageOriginal = cv2.imread('C:/Users/angel/Desktop/Lenna_(test_image).png')         #read test image lenna
 imageGrayscale = cv2.cvtColor(imageOriginal, cv2.COLOR_BGR2GRAY)                                            #convert image to grayscale
 imageResized = cv2.resize(imageGrayscale,[594,841])                                                         #Resize image to size of A1 Paper (pixels to mm) 
 imageGaussian = cv2.GaussianBlur(imageResized, (5,5), 0)                                                    #Gaussian Blur to Reduce Noise
