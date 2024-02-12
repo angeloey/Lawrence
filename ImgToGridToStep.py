@@ -11,10 +11,10 @@ robotX = 0 ## default position and angle of robot, robot must start at this loca
 robotY = 0
 robotAngle = 0
 
-stepSize = 1.8 # in degrees
-wheelRadius = 40    # in mm
+stepSize = 0.9 # in degrees
+wheelRadius = 55    # in mm
 wheelCircumference = 2*(np.pi)*wheelRadius
-wheelSpaced = 150  # in mm
+wheelSpaced = 208  # in mm
 turnRadius = wheelSpaced/2
 turnCircumference = 2*(np.pi)*turnRadius
 
@@ -67,7 +67,7 @@ def stepsToNextPoint(): ## returns the steps required to cover the distance to t
     return distanceInSteps
 
 
-imageOriginal = cv2.imread('C:/Users/angel/Desktop/Lenna_(test_image).png')         #read test image lenna
+imageOriginal = cv2.imread('D:/Users/Faith Thompson/Desktop/Loz-Testing/testimage.png')         #read test image lenna
 imageGrayscale = cv2.cvtColor(imageOriginal, cv2.COLOR_BGR2GRAY)                                            #convert image to grayscale
 imageResized = cv2.resize(imageGrayscale,[594,841])                                                         #Resize image to size of A1 Paper (pixels to mm) 
 imageGaussian = cv2.GaussianBlur(imageResized, (5,5), 0)                                                    #Gaussian Blur to Reduce Noise
