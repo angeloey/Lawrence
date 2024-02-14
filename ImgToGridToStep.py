@@ -23,8 +23,8 @@ wheelTurnsPerRotation = turnCircumference / wheelCircumference
 stepsPerWheelTurn = 360 / stepSize
 stepsPerRotation = wheelTurnsPerRotation * stepsPerWheelTurn
 
-canvasX = 197       #A1 peice of paper (subject to change)              //a4 = 297       //A1 = 841     /CHANGES LINE72
-canvasY = 111       #canvas dimensions in mm                            //a4 = 210       //A1 = 594
+canvasX = 100       #A1 peice of paper (subject to change)              //a4 = 297       //A1 = 841     /CHANGES LINE72
+canvasY = 100       #canvas dimensions in mm                            //a4 = 210       //A1 = 594
 
 def calcVectorDistance(): ## calc distance to next vector, currently in MM for A1 peice of paper, needs scaling for other sizes. linear 1:1 when resizing image to canvas size?
     vectorX = x - robotX
@@ -59,22 +59,28 @@ def calcAngleToVector(): ## returns degrees to turn in order to face the next ve
     return angleToTurn
 
 def faceNextPoint(): ## returns steps and direction required to face the next vector
-    if ((turningAngle := calcAngleToVector()) > 0 and turningAngle < 180) or turningAngle < -180:                    ## if turn is CCW turn
-        rotateClockwise = 0                                                                 #robot should turn anticlockwise LEFT
-        rotateSteps = valmap(turningAngle,0,360,0,stepsPerRotation)                         #steps needed to face next point 
-
-    elif turningAngle > 180 or (turningAngle < 0 and turningAngle > -180):
-        turningAngle = abs(turningAngle) 
-        turningAngle = turningAngle - 180
-        rotateClockwise = 1                                                                 #robot should turn clockwise RIGHT
-        rotateSteps = valmap(turningAngle,0,360,0,stepsPerRotation)                         #steps needed to face next point
-
-    else:
-        print("faceNextPoint Weird behaviour, turning CW by: ", turningAngle, " deg")
-        cv2.waitKey(0)
-        turningAngle = abs(turningAngle)                                                    ## make that hoe positive
-        rotateClockwise = 1                                                                 #robot should turn clockwise RIGHT
-        rotateSteps = valmap(turningAngle,0,360,0,stepsPerRotation)                         #steps needed to face next point
+    if (turningAngle := calcAngleToVector()) >= 0 and turningAngle < 180:                            # if turn is CCW turn
+        rotateClockwise = 0                                                                         #
+        rotateSteps = valmap(turningAngle,0,360,0,stepsPerRotation)                                 #
+    elif turningAngle <= -180:                                                                      # 
+        turningAngle = abs(turningAngle)                                                            #
+        rotateClockwise = 0                                                                         #
+        rotateSteps = valmap(turningAngle,0,360,0,stepsPerRotation)                                  # turn CCW by steps needed
+    
+    elif turningAngle <= 0 and turningAngle > -180:                                                  # if turn is CW turn
+        rotateClockwise = 1                                                                         #
+        rotateSteps = valmap(turningAngle,0,360,0,stepsPerRotation)                                 #
+    elif turningAngle >= 180:                                                                       #
+        turningAngle = turningAngle - 180                                                           #
+        rotateClockwise = 1                                                                         #
+        rotateSteps = valmap(turningAngle,0,360,0,stepsPerRotation)                                  # turn CW by steps needed
+        
+    else:                                                                                            #edge case?
+        print("faceNextPoint Weird behaviour, turning CW by: ", turningAngle, " deg")               #tell me about the edge case
+        cv2.waitKey(0)                                                                              #pause untill i acknowledge it
+        turningAngle = abs(turningAngle)                                                            #
+        rotateClockwise = 1                                                                         #
+        rotateSteps = valmap(turningAngle,0,360,0,stepsPerRotation)                                  # assume CW and turn by steps needed
     return rotateSteps, rotateClockwise
 
 def stepsToNextPoint(): ## returns the steps required to cover the distance to the next vector
@@ -117,6 +123,7 @@ for c in contours:
             forwards() # travel forwards to the next point of the contour
         
         lowerPen() # lower the pen
+        print("beep boop, drawing done")
         
         
         
