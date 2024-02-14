@@ -99,7 +99,7 @@ imageGaussian = cv2.GaussianBlur(imageResized, (5,5), 0)                        
 imageEdged = cv2.Canny(imageGaussian, 100, 200)                                                             #Canny Edge Detection
 contours, hierarchy = cv2.findContours(imageEdged, cv2.RETR_CCOMP , cv2.CHAIN_APPROX_TC89_KCOS)             #find countours, approximate chain and save coordiantes (teh shin algorithm)
 
-cv2.imshow("poo",imageEdged)
+cv2.imshow("poo",contours)
 cv2.waitKey(0)
 serialPort.write(b"penLOW\r\n")
 cv2.waitKey(0)
