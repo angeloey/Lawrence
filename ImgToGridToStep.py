@@ -8,8 +8,8 @@ magnitude = 0
 direction = 0
 pen = 0
 
-robotX = 1 ## default position and angle of robot, robot must start at this location/oprientation (better solution is CV + fiducials, maybe in V2)
-robotY = 1
+robotX = 0 ## default position and angle of robot, robot must start at this location/oprientation (better solution is CV + fiducials, maybe in V2)
+robotY = 0
 robotAngle = 0
 
 stepSize = 0.9 # in degrees
@@ -24,8 +24,8 @@ wheelTurnsPerRotation = turnCircumference / wheelCircumference
 stepsPerWheelTurn = 360 / stepSize
 stepsPerRotation = wheelTurnsPerRotation * stepsPerWheelTurn
 
-canvasX = 100       #A1 peice of paper (subject to change)              //a4 = 297       //A1 = 841     /CHANGES LINE72
-canvasY = 100      #canvas dimensions in mm                            //a4 = 210       //A1 = 594
+canvasX = 210       #A1 peice of paper (subject to change)              //a4 = 297       //A1 = 841     /CHANGES LINE72
+canvasY = 110      #canvas dimensions in mm                            //a4 = 210       //A1 = 594
 
 def calcVectorDistance(): ## calc distance to next vector, currently in MM for A1 peice of paper, needs scaling for other sizes. linear 1:1 when resizing image to canvas size?
     global robotX; global robotY
@@ -49,18 +49,21 @@ def calcAngleToVectorOLD(): ## returns degrees to turn in order to face the next
         angleInDegrees = 360-angleInDegrees ##flip that badboy back to clockwise measurements
     return angleInDegrees
 
+robotYangle = 0
+robotXangle = 0
+
 def calcAngleToVector(): ## returns degrees to turn in order to face the next vector, measured Counter-CLOCKWISE from currently facing direction
     global robotAngle; global robotX; global robotY
     dx = x - robotX
     dy = y - robotY
     angle = np.arctan2(dy, dx)  #radians
     angleInDegrees = angle * 180 / np.pi #degrees from 180 to -180
-    angleInDegrees = (angleInDegrees + 360) % 360 # degrees from 0 to 360, 0 = x axis, measured CCW
-    angleToTurn = angleInDegrees - robotAngle # actual angle to turn, negative = CW, pos = CCW
+    #angleInDegrees = (angleInDegrees + 360) % 360 # degrees from 0 to 360, 0 = x axis, measured CCW
+    angleToTurn = angleInDegrees - robotAngle # actual angle to turn, negative = CW, pos = CCW //trying inverting this
     robotAngle = angleInDegrees ## update global robot angle (should be this angle after turning) DUMB SOLUTION! USE CV and FIDUCIALS!!!!!!!!
     return angleToTurn
 
-def faceNextPoint(): ## returns steps and direction required to face the next vector
+def faceNextPointOLD2(): ## returns steps and direction required to face the next vector
     turningAngle = calcAngleToVector()
     if turningAngle >= 0 and turningAngle < 180:                                                     # if turn is CCW turn
         turningAngle = abs(turningAngle) 
@@ -89,6 +92,18 @@ def faceNextPoint(): ## returns steps and direction required to face the next ve
         rotateSteps = valmap(turningAngle,0,360,0,stepsPerRotation)                                  # assume CW and turn by steps needed
     return rotateSteps, rotateClockwise
 
+def faceNextPoint():
+    turningAngle = calcAngleToVector()
+    if turningAngle > 0:
+        rotateClockwise = 0
+        rotateSteps = valmap(turningAngle,0,360,0,stepsPerRotation)
+    else:
+        turningAngle = abs(turningAngle)
+        rotateClockwise = 1
+        rotateSteps = valmap(turningAngle,0,360,0,stepsPerRotation)
+        
+    return rotateSteps, rotateClockwise
+
 def stepsToNextPoint(): ## returns the steps required to cover the distance to the next vector
     global robotX; global robotY
     distanceInTurns = calcVectorDistance() / wheelCircumference ## calculate distance in terms of wheel turns (assuming calcVectorDistance retuns value in mm)
@@ -98,28 +113,32 @@ def stepsToNextPoint(): ## returns the steps required to cover the distance to t
     return distanceInSteps
 
 
-imageOriginal = cv2.imread('C:/Users/angel/Desktop/test.png')         #read test image lenna
+imageOriginal = cv2.imread('D:/Users/Faith Thompson/Pictures/Arrow.png')         #read test image lenna
 imageGrayscale = cv2.cvtColor(imageOriginal, cv2.COLOR_BGR2GRAY)                                            #convert image to grayscale
 imageResized = cv2.resize(imageGrayscale,[canvasY,canvasX])                                                 #Resize image to size of A1 Paper (pixels to mm) 
 imageGaussian = cv2.GaussianBlur(imageResized, (5,5), 0)                                                    #Gaussian Blur to Reduce Noise
 imageEdged = cv2.Canny(imageGaussian, 100, 200)                                                             #Canny Edge Detection
-contours, hierarchy = cv2.findContours(imageEdged, cv2.RETR_CCOMP , cv2.CHAIN_APPROX_TC89_KCOS)             #find countours, approximate chain and save coordiantes (teh shin algorithm)
+contours, hierarchy = cv2.findContours(imageEdged, cv2.RETR_EXTERNAL , cv2.CHAIN_APPROX_TC89_KCOS)             #find countours, approximate chain and save coordiantes (teh shin algorithm)
 
 cv2.drawContours(imageOriginal, contours, -1, (0,255,0), 1)
 imageOriginal[1,1]=(1, 1, 255)
+cv2.imshow("poo",imageEdged)
+cv2.waitKey(0)
 
 serialPort.write(b"penLOW\r\n")
 
 serialPort.write(b"penLOW\r\n")
+
 
 for c in contours:
     #raisePen() # raise the pen
 
     for i in range(len(c)):
         x, y = c[i][0]
+        #y = 0 - y
         
         magnitude, direction = (np.round(faceNextPoint())).astype(int)
-        magnitude = np.round(magnitude/2).astype(int)
+        magnitude = np.round(magnitude).astype(int)
         for j in range(magnitude): # turn to face the next point of the contour
             if(direction == 0):
                 turnL()
@@ -130,14 +149,18 @@ for c in contours:
         for j in range(steps):
             forwards() # travel forwards to the next point of the contour
         
+        #robotX = x
+        #robotY = y
+
         lowerPen() # lower the pen
         print("beep boop, drawing done")
         imageOriginal[y,x]=(1, 1, 255)
         img1 = cv2.cvtColor(imageOriginal,cv2.COLOR_BGR2RGB)
-        plt.figure(figsize=(10,10))
-        plt.imshow(img1, 'gray')
-        plt.title("ORIGINAL")
+    plt.figure(figsize=(10,10))
+    plt.imshow(img1, 'gray')
+    plt.title("ORIGINAL")
         #plt.show()
+    plt.show()
 
         
         

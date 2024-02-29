@@ -1,6 +1,6 @@
 import serial
 # /dev/rfcomm0 for linux, COM3 etc. for windows
-serialPort = serial.Serial(port = "/dev/rfcomm0", baudrate=115200,
+serialPort = serial.Serial(port = "COM3", baudrate=115200,
                            bytesize=8, timeout=2, stopbits=serial.STOPBITS_ONE) # setup serial port on pc
 
 serialString = ""                                           # Used to hold data coming over UART
