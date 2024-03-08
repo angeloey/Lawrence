@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+import datetime
 
 def calcAngleToVector(): ## returns degrees to turn in order to face the next vector, measured Counter-CLOCKWISE from currently facing direction
     global robotAngle; global robotX; global robotY
@@ -15,13 +16,13 @@ def calcAngleToVector(): ## returns degrees to turn in order to face the next ve
     robotY = y
     return angleToTurn
 
-canvasX = 420
-canvasY = 297
+canvasX = 297
+canvasY = 210
 robotAngle = 0
 robotX = 0
 robotY = 0
 
-imageOriginal = cv2.imread('D:/Users/Faith Thompson/Pictures/Arrow.png')         #read test image lenna
+imageOriginal = cv2.imread('D:/Users/Faith Thompson/Pictures/Mike.png')         #read test image lenna
 imageGrayscale = cv2.cvtColor(imageOriginal, cv2.COLOR_BGR2GRAY)                                            #convert image to grayscale
 imageResized = cv2.resize(imageGrayscale,[canvasY,canvasX])                                                 #Resize image to size of A1 Paper (pixels to mm) 
 imageGaussian = cv2.GaussianBlur(imageResized, (5,5), 0)                                                    #Gaussian Blur to Reduce Noise
@@ -33,6 +34,8 @@ imageOriginal[1,1]=(1, 1, 255)
 cv2.imshow("poo",imageEdged)
 cv2.waitKey(0)
 
+plt.figure(figsize=(10,10))
+
 for c in contours:
     #raisePen() # raise the pen
     print("start")
@@ -43,12 +46,11 @@ for c in contours:
         print(anglepoo)
         imageOriginal[y,x]=(1, 1, 255)
         img1 = cv2.cvtColor(imageOriginal,cv2.COLOR_BGR2RGB)
-    
-    plt.figure(figsize=(10,10))
-    plt.imshow(img1, 'gray')
-    plt.title("ORIGINAL")
-        #plt.show()
-    plt.show()
-    print("end")
 
+plt.imshow(img1, 'gray')
+plt.title("ORIGINAL")
+print("end")
+poo = ""
+plt.savefig("latest.png")
+plt.show()
 

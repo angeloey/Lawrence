@@ -3,6 +3,7 @@ import cv2
 import serial
 import matplotlib.pyplot as plt
 from SerialCommands import *
+import datetime
 
 magnitude = 0
 direction = 0
@@ -24,8 +25,8 @@ wheelTurnsPerRotation = turnCircumference / wheelCircumference
 stepsPerWheelTurn = 360 / stepSize
 stepsPerRotation = wheelTurnsPerRotation * stepsPerWheelTurn
 
-canvasX = 210       #A1 peice of paper (subject to change)              //a4 = 297       //A1 = 841     /CHANGES LINE72
-canvasY = 110      #canvas dimensions in mm                            //a4 = 210       //A1 = 594
+canvasX = 297       #A1 peice of paper (subject to change)              //a4 = 297       //A1 = 841     /CHANGES LINE72
+canvasY = 210      #canvas dimensions in mm                            //a4 = 210       //A1 = 594
 
 def calcVectorDistance(): ## calc distance to next vector, currently in MM for A1 peice of paper, needs scaling for other sizes. linear 1:1 when resizing image to canvas size?
     global robotX; global robotY
@@ -129,6 +130,7 @@ serialPort.write(b"penLOW\r\n")
 
 serialPort.write(b"penLOW\r\n")
 
+plt.figure(figsize=(10,10))
 
 for c in contours:
     #raisePen() # raise the pen
@@ -156,11 +158,14 @@ for c in contours:
         print("beep boop, drawing done")
         imageOriginal[y,x]=(1, 1, 255)
         img1 = cv2.cvtColor(imageOriginal,cv2.COLOR_BGR2RGB)
-    plt.figure(figsize=(10,10))
-    plt.imshow(img1, 'gray')
-    plt.title("ORIGINAL")
-        #plt.show()
-    plt.show()
+
+plt.imshow(img1, 'gray')
+plt.title("ORIGINAL")
+print("end")
+poo = ""
+plt.savefig("latest.png")
+plt.show()
+
 
         
         
