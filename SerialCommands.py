@@ -1,4 +1,7 @@
 import serial
+import os
+import datetime
+
 # /dev/rfcomm0 for linux, COM3 etc. for windows
 serialPort = serial.Serial(port = "COM3", baudrate=115200,
                            bytesize=8, timeout=2, stopbits=serial.STOPBITS_ONE) # setup serial port on pc
@@ -18,8 +21,20 @@ def checkReady(): ## needs testing
         except:
             serialString = ""
             serialMessage = ""
-            serialPort.write(b"error\r\n") # this should cause an "Invalid" error and re do the last command. janky fix.
+            serialPort.write(lastCommand)
             print("DECODE ERROR HERE <-----")
+            
+            filename = 'log.txt'
+            if os.path.exists(filename):
+                append_write = 'a' # append if already exists
+            else:
+                append_write = 'w' # make a new file if not
+            errorLog = open(filename,append_write)
+            errorLog.write('Error recorded at %s.\n' % (datetime.datetime.now()))
+            errorLog.write("Error: " + serialString + '\n\n')
+            errorLog.close()
+            return 0
+        
         print(serialMessage)
         if("Ready" in serialMessage):
             return 1
