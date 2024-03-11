@@ -12,8 +12,14 @@ def checkReady(): ## needs testing
     global serialString
     global lastCommand
     if(serialPort.in_waiting > 0):
-        serialString = serialPort.readline()
-        serialMessage = (serialString.decode('Ascii'))
+        try:
+            serialString = serialPort.readline()
+            serialMessage = (serialString.decode('Ascii'))
+        except:
+            serialString = ""
+            serialMessage = ""
+            serialPort.write(b"error\r\n") # this should cause an "Invalid" error and re do the last command. janky fix.
+            print("DECODE ERROR HERE <-----")
         print(serialMessage)
         if("Ready" in serialMessage):
             return 1
