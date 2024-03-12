@@ -86,7 +86,7 @@ def faceNextPointOLD2(): ## returns steps and direction required to face the nex
         rotateSteps = valmap(turningAngle,0,360,0,stepsPerRotation)                                  # turn CW by steps needed
         
     else:                                                                                            #edge case?
-        print("faceNextPoint Weird behaviour, turning CW by: ", turningAngle, " deg")               #tell me about the edge case
+        print("faceNextPoint Weird behaviour, turning CW by: " + turningAngle + " deg PAUSED")               #tell me about the edge case
         cv2.waitKey(0)                                                                              #pause untill i acknowledge it
         turningAngle = abs(turningAngle)                                                            #
         rotateClockwise = 1                                                                         #
