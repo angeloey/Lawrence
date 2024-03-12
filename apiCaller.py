@@ -6,9 +6,8 @@ import numpy as np
 import cv2
 import PIL
 
-# Faith Key: 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
 
-openai.api_key = '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'
+openai.api_key = ""
 
 userPrompt = input('My name is Lawrence (Bastard2), what should i draw?: ')
 
