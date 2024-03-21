@@ -13,7 +13,7 @@ robotX = 0 ## default position and angle of robot, robot must start at this loca
 robotY = 0
 robotAngle = 0
 
-stepSize = 0.9 # in degrees
+stepSize = 0.45 # in degrees
 wheelRadius = 51    # in mm
 wheelCircumference = 2*(np.pi)*wheelRadius
 wheelSpaced = 295  # in mm
@@ -114,12 +114,12 @@ def stepsToNextPoint(): ## returns the steps required to cover the distance to t
     return distanceInSteps
 
 
-imageOriginal = cv2.imread('D:/Users/Faith Thompson/Pictures/Arrow.png')         #read test image lenna
+imageOriginal = cv2.imread('D:/Users/Faith Thompson/Pictures/GenZ.jpg')         #read test image lenna
 imageGrayscale = cv2.cvtColor(imageOriginal, cv2.COLOR_BGR2GRAY)                                            #convert image to grayscale
 imageResized = cv2.resize(imageGrayscale,[canvasY,canvasX])                                                 #Resize image to size of A1 Paper (pixels to mm) 
 imageGaussian = cv2.GaussianBlur(imageResized, (5,5), 0)                                                    #Gaussian Blur to Reduce Noise
 imageEdged = cv2.Canny(imageGaussian, 100, 200)                                                             #Canny Edge Detection
-contours, hierarchy = cv2.findContours(imageEdged, cv2.RETR_EXTERNAL , cv2.CHAIN_APPROX_TC89_KCOS)             #find countours, approximate chain and save coordiantes (teh shin algorithm)
+contours, hierarchy = cv2.findContours(imageEdged, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_TC89_KCOS)             #find countours, approximate chain and save coordiantes (teh shin algorithm)
 
 cv2.drawContours(imageOriginal, contours, -1, (0,255,0), 1)
 imageOriginal[1,1]=(1, 1, 255)
@@ -129,6 +129,7 @@ cv2.waitKey(0)
 serialPort.write(b"penLOW\r\n")
 
 serialPort.write(b"penLOW\r\n")
+
 
 plt.figure(figsize=(10,10))
 
@@ -160,6 +161,7 @@ for c in contours:
         img1 = cv2.cvtColor(imageOriginal,cv2.COLOR_BGR2RGB)
 
 plt.imshow(img1, 'gray')
+
 plt.title("ORIGINAL")
 print("end")
 poo = ""

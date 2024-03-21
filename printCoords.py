@@ -22,12 +22,12 @@ robotAngle = 0
 robotX = 0
 robotY = 0
 
-imageOriginal = cv2.imread('D:/Users/Faith Thompson/Pictures/Mike.png')         #read test image lenna
+imageOriginal = cv2.imread('D:/Users/Faith Thompson/Pictures/GenZ.jpg')         #read test image lenna
 imageGrayscale = cv2.cvtColor(imageOriginal, cv2.COLOR_BGR2GRAY)                                            #convert image to grayscale
 imageResized = cv2.resize(imageGrayscale,[canvasY,canvasX])                                                 #Resize image to size of A1 Paper (pixels to mm) 
 imageGaussian = cv2.GaussianBlur(imageResized, (5,5), 0)                                                    #Gaussian Blur to Reduce Noise
 imageEdged = cv2.Canny(imageGaussian, 100, 200)                                                             #Canny Edge Detection
-contours, hierarchy = cv2.findContours(imageEdged, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_TC89_KCOS)             #find countours, approximate chain and save coordiantes (teh shin algorithm)
+contours, hierarchy = cv2.findContours(imageEdged, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_TC89_KCOS)             #find countours, approximate chain and save coordiantes (teh shin algorithm)
 
 cv2.drawContours(imageOriginal, contours, -1, (0,255,0), 1)
 imageOriginal[1,1]=(1, 1, 255)
