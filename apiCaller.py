@@ -13,7 +13,7 @@ userPrompt = input('My name is Lawrence (Bastard2), what should i draw?: ')
 
 apiResponse = openai.images.generate(
   model = "dall-e-2",
-  prompt = userPrompt,
+  prompt = (userPrompt + "Simple drawing, high contrast, in the style of shepard fairey"),
   size = "512x512",
   quality = "standard",
   n = 1,
